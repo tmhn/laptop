@@ -26,5 +26,5 @@
 
 ### Terminal
 1. Set Background and forground colors.
-2. Run setup script
+2. Run setup script: `curl https://github.com/spartaglobal/laptop/blob/master/mac | bash`
 
