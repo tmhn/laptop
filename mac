@@ -16,8 +16,16 @@ set -e
 fancy_echo "Changing some settings..."
 curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/avatar.png > "$HOME/Pictures/avatar.png"
 curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/desktop-bg.png > "$HOME/Pictures/desktop-bg.png"
-DTBG_SCRIPT = "tell application \"Finder\" to set desktop picture to \"$HOME/Pictures/desktop-bg.png\" as POSIX file"
-osascript -e $DTBG_SCRIPT
+osascript <<EOD
+  tell application "Finder"
+    set desktop picture to "$HOME/Pictures/desktop-bg.png" as POSIX file
+  end tell
+EOD
+
+# Profile Picture
+dscl . delete $HOME jpegphoto
+dscl . delete $HOME Picture
+dscl . create $HOME Picture "$HOME/Pictures/avatar.png"
 
 # Dock
 /usr/libexec/PlistBuddy -c "Set :magnification bool true" ~/Library/Preferences/com.apple.dock.plist
