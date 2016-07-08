@@ -20,6 +20,9 @@
 8. [Vagrant](https://www.vagrantup.com/downloads.html)
 9. [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 10. Install XCode (App Store)
+11. Install xcode command line tools: `xcode-select --install`.
+12. Install [Java DK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+13. Install [MySQL Workbench](https://dev.mysql.com/downloads/workbench/)
 
 ### Terminal
 1. Set Background and forground colors.

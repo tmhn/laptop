@@ -4,6 +4,15 @@
 # Be prepared to turn your laptop (or desktop, no haters here)
 # into an awesome development machine.
 
+
+fancy_echo "Updating macOS"
+sudo softwareupdate -i -a
+
+# Install jMeter
+fancy_echo "Install jMeter"
+cd ~
+curl http://mirrors.ukfast.co.uk/sites/ftp.apache.org//jmeter/binaries/apache-jmeter-3.0.tgz | tar xvz
+
 fancy_echo() {
   local fmt="$1"; shift
 
@@ -47,18 +56,20 @@ if ! command -v brew >/dev/null; then
 fi
 
 if brew list | grep -Fq brew-cask; then
-  fancy_echo "Uninstalling old Homebrew-Cask ..."
+  fancy_echo "Uninstalling old Homebrew-Cask..."
   brew uninstall --force brew-cask
 fi
 
-fancy_echo "Updating Homebrew formulae ..."
+fancy_echo "Updating Homebrew formulae..."
 brew update
 brew install openssl libxml2 libyaml ctags git vim heroku-toolbelt hub imagemagick curl chromedriver httpie
 
 # Install Ruby
+fancy_echo "Install Ruby..."
 brew install rbenv ruby-build rbenv-default-gems
 
 # Install Databases
+fancy_echo "Install databases..."
 brew install postgres redis sqlite mongodb
 
 # MySQL
@@ -108,9 +119,8 @@ vim +PlugInstall +qall
 vim +PlugClean +qall
 
 # Run updates
-fancy_echo "Updating NPM and macOS software"
+fancy_echo "Updating NPM"
 
-sudo softwareupdate -i -a
 npm update npm -g
 npm update -g
 
