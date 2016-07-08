@@ -7,7 +7,7 @@
 3. Set [Profile photo](https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/avatar.png)
 4. Set [Wallpaper](https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/desktop-bg.png)
 5. Shrink and Auto-hide dock.
-6. Install Fonts: Source Sans Pro, Inconsolata, Ubuntu (![download zip](https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip) and install all TFF files).
+6. Install Fonts: Source Sans Pro, Inconsolata, Ubuntu ([download zip](https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip) and install all TFF files).
 
 ### Install Apps
 

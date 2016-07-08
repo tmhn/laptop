@@ -102,24 +102,34 @@ echo "Installing Vim Plug"
 
 # Vim Plugin
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-echo "Running Vim Plug Commands"
+fancy_echo "Running Vim Plug Commands"
 
 vim +PlugInstall +qall
 vim +PlugClean +qall
 
 # Run updates
+fancy_echo "Updating NPM and macOS software"
+
 sudo softwareupdate -i -a
 npm update npm -g
 npm update -g
 
 # Clone down dotfiles
+fancy_echo "Installing dotfiles..."
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.bash_profile > ~/.bash_profile
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.vimrc > ~/.vimrc
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.pryrc > ~/.pryrc
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.irbrc > ~/.irbrc
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.gitconfig > ~/.gitconfig
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.git_status_in_prompt.sh > ~/.git_status_in_prompt.sh
 
-
+fancy_echo "Installed dotfiles!"
 
 # Clone and install Workstation VM
-
 git clone https://github.com/spartaglobal/sparta-workstation.git ~/sparta-workstation
 rm -rdf ~/sparta-workstation/.git ~/sparta-workstation/README.md
 cd ~/sparta-workstation && vagrant up
 
+fancy_echo "DONE!"
+fancy_echo "-----------------------------------------"
 
