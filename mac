@@ -29,9 +29,16 @@ killall Dock
 # Fonts
 curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip | tar xvz -C "$HOME/Desktop"
 
-# Terminal
+# Set Terminal Colors
 curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/SpartaPro.terminal > "$HOME/SpartaPro.terminal"
+open "$HOME/SpartaPro.terminal"
 osascript <<EOD
+  tell application "Terminal"
+    set origSettings to default settings
+    set default settings to settings set "SpartaPro"
+    activate
+    tell application "System Events" to keystroke "n" using command down
+  end tell
 EOD
 
 
