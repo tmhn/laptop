@@ -107,17 +107,19 @@ echo "Running Vim Plug Commands"
 vim +PlugInstall +qall
 vim +PlugClean +qall
 
+# Run updates
+sudo softwareupdate -i -a
+npm update npm -g
+npm update -g
 
 # Clone down dotfiles
 
+
+
 # Clone and install Workstation VM
 
+git clone https://github.com/spartaglobal/sparta-workstation.git ~/sparta-workstation
+rm -rdf ~/sparta-workstation/.git ~/sparta-workstation/README.md
+cd ~/sparta-workstation && vagrant up
 
 
-
-
-if [ -f "$HOME/.laptop.local" ]; then
-  fancy_echo "Running your customizations from ~/.laptop.local ..."
-  # shellcheck disable=SC1090
-  . "$HOME/.laptop.local"
-fi
