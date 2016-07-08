@@ -1,9 +1,13 @@
 #!/bin/sh
 
-# Welcome to the thoughtbot laptop script!
-# Be prepared to turn your laptop (or desktop, no haters here)
-# into an awesome development machine.
+# Welcome to the Sparta laptop script!
 
+fancy_echo() {
+  local fmt="$1"; shift
+
+  # shellcheck disable=SC2059
+  printf "\n$fmt\n" "$@"
+}
 
 fancy_echo "Updating macOS"
 sudo softwareupdate -i -a
@@ -13,13 +17,9 @@ fancy_echo "Install jMeter"
 cd ~
 curl http://mirrors.ukfast.co.uk/sites/ftp.apache.org//jmeter/binaries/apache-jmeter-3.0.tgz | tar xvz
 
-fancy_echo() {
-  local fmt="$1"; shift
 
-  # shellcheck disable=SC2059
-  printf "\n$fmt\n" "$@"
-}
-
+# Install Homebrew
+fancy_echo "Install jMeter"
 if [ ! -d "$HOME/.bin/" ]; then
   mkdir "$HOME/.bin"
 fi
@@ -136,9 +136,9 @@ curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfile
 fancy_echo "Installed dotfiles!"
 
 # Clone and install Workstation VM
-git clone https://github.com/spartaglobal/sparta-workstation.git ~/sparta-workstation
-rm -rdf ~/sparta-workstation/.git ~/sparta-workstation/README.md
-cd ~/sparta-workstation && vagrant up
+# git clone https://github.com/spartaglobal/sparta-workstation.git ~/sparta-workstation
+# rm -rdf ~/sparta-workstation/.git ~/sparta-workstation/README.md
+# cd ~/sparta-workstation && vagrant up
 
 fancy_echo "DONE!"
 fancy_echo "-----------------------------------------"
