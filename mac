@@ -50,8 +50,6 @@ if ! command -v brew >/dev/null; then
     curl -fsS \
       'https://raw.githubusercontent.com/Homebrew/install/master/install' | ruby
 
-    append_to_zshrc '# recommended by brew doctor'
-
     export PATH="/usr/local/bin:$PATH"
 fi
 
@@ -86,7 +84,7 @@ find_latest_ruby() {
 
 ruby_version="$(find_latest_ruby)"
 
-append_to_zshrc 'eval "$(rbenv init - --no-rehash)"' 1
+# append_to_zshrc 'eval "$(rbenv init - --no-rehash)"' 1
 eval "$(rbenv init -)"
 
 if ! rbenv versions | grep -Fq "$ruby_version"; then
@@ -105,7 +103,7 @@ number_of_cores=$(sysctl -n hw.ncpu)
 bundle config --global jobs $((number_of_cores - 1))
 
 # Set Default rubygems to include in all ruby installations via rbenv
-echo "bundler\nbrice\ngist\npry\npry-doc\nawesome_print\nspecific_install" > /home/vagrant/.rbenv/default-gems
+echo "bundler\nbrice\ngist\npry\npry-doc\nawesome_print\nspecific_install" > ~/.rbenv/default-gems
 
 # Install vim-plug
 
