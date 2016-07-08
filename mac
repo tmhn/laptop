@@ -9,17 +9,47 @@ fancy_echo() {
   printf "\n$fmt\n" "$@"
 }
 
-fancy_echo "Updating macOS"
-sudo softwareupdate -i -a
+# Exit if any subprocess returns non-zero.
+set -e
 
-# Install jMeter
-fancy_echo "Install jMeter"
-cd ~
-curl http://mirrors.ukfast.co.uk/sites/ftp.apache.org//jmeter/binaries/apache-jmeter-3.0.tgz | tar xvz
+# OSX Settings
+fancy_echo "Changing some settings..."
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/avatar.png > "$HOME/Pictures/avatar.png"
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/desktop-bg.png > "$HOME/Pictures/desktop-bg.png"
+DTBG_SCRIPT = "tell application \"Finder\" to set desktop picture to \"$HOME/Pictures/desktop-bg.png\" as POSIX file"
+osascript -e $DTBG_SCRIPT
 
+# Dock
+/usr/libexec/PlistBuddy -c "Set :magnification bool true" ~/Library/Preferences/com.apple.dock.plist
+/usr/libexec/PlistBuddy -c "Set :autohide bool true" ~/Library/Preferences/com.apple.dock.plist
+/usr/libexec/PlistBuddy -c "Delete :persistent-apps" ~/Library/Preferences/com.apple.dock.plist
+/usr/libexec/PlistBuddy -c "Add :persistent-apps array" ~/Library/Preferences/com.apple.dock.plist
+killall Dock
+
+# Fonts
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip | tar xvz -C "$HOME/Desktop"
+
+# Terminal
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/SpartaPro.terminal > "$HOME/SpartaPro.terminal"
+osascript <<EOD
+EOD
+
+
+# XCode Command Line Tools
+fancy_echo "Installing XCode Command Line tools..."
+xcode-select --install
+sleep 3
+osascript <<EOD
+  tell application "System Events"
+    tell process "Install Command Line Developer Tools"
+      keystroke return
+      click button "Agree" of window "License Agreement"
+    end tell
+  end tell
+EOD
 
 # Install Homebrew
-fancy_echo "Install jMeter"
+fancy_echo "Creating ~/.bin folder..."
 if [ ! -d "$HOME/.bin/" ]; then
   mkdir "$HOME/.bin"
 fi
@@ -60,29 +90,39 @@ fi
 
 fancy_echo "Updating Homebrew formulae..."
 brew update
+
+fancy_echo "Installing sparta libs and tools..."
 brew install openssl libxml2 libyaml ctags git vim heroku-toolbelt hub imagemagick curl chromedriver httpie
 
 # Install Ruby
-fancy_echo "Install Ruby..."
+fancy_echo "Install rbenv..."
 brew install rbenv ruby-build rbenv-default-gems
 
 # Install Databases
-fancy_echo "Install databases..."
+fancy_echo "Install database tools..."
 brew install postgres redis sqlite mongodb
 
 # MySQL
 brew install mysql
 
+# Vagrant and VirtualBox
+brew cask install virtualbox vagrant
 
+# Browsers
+brew cask install google-chrome firefox
+
+# Sublime
+brew cask install sublime-text
 
 # Install Ruby
 
-fancy_echo "Configuring Ruby ..."
 find_latest_ruby() {
   rbenv install -l | grep -v - | tail -1 | sed -e 's/^ *//'
 }
 
 ruby_version="$(find_latest_ruby)"
+
+fancy_echo "Installing and Configuring ruby $ruby_version..."
 
 # append_to_zshrc 'eval "$(rbenv init - --no-rehash)"' 1
 eval "$(rbenv init -)"
@@ -103,35 +143,77 @@ number_of_cores=$(sysctl -n hw.ncpu)
 bundle config --global jobs $((number_of_cores - 1))
 
 # Set Default rubygems to include in all ruby installations via rbenv
-echo "bundler\nbrice\ngist\npry\npry-doc\nawesome_print\nspecific_install" > ~/.rbenv/default-gems
+echo "bundler\nbrice\ngist\npry\npry-doc\nawesome_print\nspecific_install" > "$HOME/.rbenv/default-gems"
+
+
 
 # Install vim-plug
 
-echo "Installing Vim Plug"
+echo "Installing Vim Plug..."
 
-# Vim Plugin
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fancy_echo "Running Vim Plug Commands"
 
 vim +PlugInstall +qall
 vim +PlugClean +qall
 
-# Run updates
-fancy_echo "Updating NPM"
+# Update NPM
+fancy_echo "Updating NPM..."
 
 npm update npm -g
 npm update -g
 
 # Clone down dotfiles
 fancy_echo "Installing dotfiles..."
-curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.bash_profile > ~/.bash_profile
-curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.vimrc > ~/.vimrc
-curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.pryrc > ~/.pryrc
-curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.irbrc > ~/.irbrc
-curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.gitconfig > ~/.gitconfig
-curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.git_status_in_prompt.sh > ~/.git_status_in_prompt.sh
-
+cd $HOME
+curl -O https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.bash_profile
+curl -O https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.vimrc
+curl -O https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.pryrc
+curl -O https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.irbrc
+curl -O https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.gitconfig
+curl -O https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.git_status_in_prompt.sh
 fancy_echo "Installed dotfiles!"
+
+# Install MySQL Workbench
+fancy_echo "Installing MySQL Workbench..."
+temp=$TMPDIR$(uuidgen)
+mkdir -p $temp/mount
+curl https://dev.mysql.com/get/Downloads/MySQLGUITools/mysql-workbench-community-6.3.7-osx-x86_64.dmg > $temp/1.dmg
+yes | hdiutil attach -noverify -nobrowse -mountpoint $temp/mount $temp/1.dmg
+cp -r $temp/mount/*.app /Applications
+hdiutil detach $temp/mount
+rm -r $temp
+
+# Install Sublime Text 3
+# fancy_echo "Installing Sublime Text 3..."
+# temp=$TMPDIR$(uuidgen)
+# mkdir -p $temp/mount
+# curl https://download.sublimetext.com/Sublime%20Text%20Build%203114.dmg > $temp/1.dmg
+# yes | hdiutil attach -noverify -nobrowse -mountpoint $temp/mount $temp/1.dmg
+# cp -r $temp/mount/*.app /Applications
+# hdiutil detach $temp/mount
+# rm -r $temp
+
+# Install Slack
+fancy_echo "Installing Slack..."
+curl https://downloads.slack-edge.com/mac_public_releases/slack-2.0.3.zip | tar xvz -C /Applications
+
+# Install jMeter
+fancy_echo "Installing jMeter..."
+curl http://mirrors.ukfast.co.uk/sites/ftp.apache.org//jmeter/binaries/apache-jmeter-3.0.tgz | tar xvz -C $HOME
+
+# Install MacDown
+fancy_echo "Installing MacDown..."
+curl -L https://github.com/uranusjr/macdown/releases/download/v0.6/MacDown.app.zip | tar xvz -C /Applications
+
+# Install Atom
+fancy_echo "Installing Atom..."
+curl -L https://github.com/atom/atom/releases/download/v1.8.0/atom-mac.zip | tar xvz -C /Applications
+
+# Run Apple Update
+fancy_echo "Updating macOS"
+sudo softwareupdate -i -a
+
 
 # Clone and install Workstation VM
 # git clone https://github.com/spartaglobal/sparta-workstation.git ~/sparta-workstation

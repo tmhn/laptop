@@ -1,8 +1,18 @@
 # Sparta Global Laptop Config
 
-### Steps to install
+### Manual Steps to install
 
 1. Initial Setup
+2. Set 
+2. Run install script: `https://raw.githubusercontent.com/spartaglobal/laptop/master/mac | bash`
+3. Wait **Ages**!
+4. Install the fonts on the desktop and delete the folders.
+5. Install [Java DK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+6. Install XCode (App Store)
+
+
+### Other Steps
+
 2. Remvove icons from dock except Safari, Finder and Calendar.
 3. Set [Profile photo](https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/avatar.png)
 4. Set [Wallpaper](https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/desktop-bg.png)
