@@ -2,8 +2,7 @@
 
 ### Manual Steps to install
 
-1. Initial Setup
-2. Set 
+1. Initial Setup (WiFi etc)
 2. Run install script: `https://raw.githubusercontent.com/spartaglobal/laptop/master/mac | bash`
 3. Wait **Ages**!
 4. Install the fonts on the desktop and delete the folders.
@@ -11,7 +10,7 @@
 6. Install XCode (App Store)
 
 
-### Other Steps
+### Steps which should have been done by the script...
 
 2. Remvove icons from dock except Safari, Finder and Calendar.
 3. Set [Profile photo](https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/avatar.png)
