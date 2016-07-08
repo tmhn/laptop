@@ -107,7 +107,7 @@ fancy_echo "Updating Homebrew formulae..."
 brew update
 
 fancy_echo "Installing sparta libs and tools..."
-brew install openssl libxml2 libyaml ctags git vim heroku-toolbelt hub imagemagick curl chromedriver httpie
+brew install openssl libxml2 libyaml ctags git vim heroku-toolbelt hub imagemagick curl chromedriver httpie node
 
 # Install Ruby
 fancy_echo "Install rbenv..."
@@ -158,8 +158,15 @@ number_of_cores=$(sysctl -n hw.ncpu)
 bundle config --global jobs $((number_of_cores - 1))
 
 # Set Default rubygems to include in all ruby installations via rbenv
-echo "bundler\nbrice\ngist\npry\npry-doc\nawesome_print\nspecific_install" > "$HOME/.rbenv/default-gems"
-
+cat > "$HOME/.rbenv/default-gems" <<-EOF
+bundler
+brice
+gist
+pry
+pry-doc
+awesome_print
+specific_install
+EOF
 
 # Update NPM
 fancy_echo "Updating NPM..."
