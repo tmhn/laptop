@@ -227,7 +227,7 @@ vim :silent +PlugClean +qall
 fancy_echo "Installing MySQL Workbench..."
 temp=$TMPDIR$(uuidgen)
 mkdir -p $temp/mount
-curl http://cdn.mysql.com//Downloads/MySQLGUITools/mysql-workbench-community-6.3.7-osx-x86_64.dmg > $temp/1.dmg
+curl -s http://cdn.mysql.com//Downloads/MySQLGUITools/mysql-workbench-community-6.3.7-osx-x86_64.dmg > $temp/1.dmg
 yes | hdiutil attach -noverify -nobrowse -mountpoint $temp/mount $temp/1.dmg
 cp -r $temp/mount/*.app /Applications
 hdiutil detach $temp/mount
