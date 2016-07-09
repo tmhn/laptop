@@ -245,16 +245,6 @@ cp -r $temp/mount/*.app /Applications
 hdiutil detach $temp/mount
 rm -r $temp
 
-# Install Sublime Text 3
-# fancy_echo "Installing Sublime Text 3..."
-# temp=$TMPDIR$(uuidgen)
-# mkdir -p $temp/mount
-# curl https://download.sublimetext.com/Sublime%20Text%20Build%203114.dmg > $temp/1.dmg
-# yes | hdiutil attach -noverify -nobrowse -mountpoint $temp/mount $temp/1.dmg
-# cp -r $temp/mount/*.app /Applications
-# hdiutil detach $temp/mount
-# rm -r $temp
-
 # Install Slack
 fancy_echo "Installing Slack..."
 curl -s https://downloads.slack-edge.com/mac_public_releases/slack-2.0.3.zip | tar xvz -C /Applications
@@ -278,6 +268,10 @@ killall Finder && open /System/Library/CoreServices/Finder.app
 # Run Apple Update
 fancy_echo "Updating macOS..."
 echo $passwd | sudo -S -k softwareupdate -i -a
+
+# Build locate database
+fancy_echo "Building locate database..."
+sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
 
 fancy_echo "----------------------Local Setup Finished!----------------------"
 
