@@ -75,17 +75,6 @@ Bits of this script were borrowed from all over the internet, but in particular:
 * https://github.com/attack/laptop
 * https://github.com/thoughtbot/laptop/
 
-
-### Links for installation packages
-1. [Chrome](https://www.google.com/chrome/browser/desktop/index.html)
-2. [Firefox](https://www.mozilla.org/en-GB/firefox/new/)
-3. [Slack](https://slack.com/downloads)
-5. [Sublime Text 3](https://www.sublimetext.com/3)
-6. [MacDown](http://macdown.uranusjr.com/)
-7. [Atom](https://atom.io/)
-8. [Vagrant](https://www.vagrantup.com/downloads.html)
-9. [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-12. Install [Java DK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-13. Install [MySQL Workbench](https://dev.mysql.com/downloads/workbench/)
+Initially built by [@dannysmith](http://github.com/dannysmith).
 
 
