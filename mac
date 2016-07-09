@@ -277,8 +277,10 @@ echo $passwd | sudo -S -k softwareupdate -i -a
 
 # Build locate database
 fancy_echo "Building locate database..."
-sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
-
+echo $passwd | sudo -S -k launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+echo $passwd | sudo -S -k /usr/libexec/locate.updatedb
+echo "Finished building locate database"
+echo
 fancy_echo "----------------------Local Setup Finished!----------------------"
 
 
