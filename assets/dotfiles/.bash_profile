@@ -25,13 +25,6 @@ export CLICOLOR=1
 export LSCOLORS=dxfxcxcxbxexexbxbxDADA
 # See http://softwaregravy.wordpress.com/2010/10/16/ls-colors-for-mac/
 
-# Load colours
-autoload -U colors
-colors
-
-# More Git aliases
-alias g='git'
-
 # Ask for confirmation when running rm
 alias rm='rm -i'
 
