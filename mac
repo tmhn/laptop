@@ -47,25 +47,26 @@ osascript <<EOD
   end tell
 EOD
 
+# Set faster Key Repeat
+defaults write -g KeyRepeat -int 0
+
+# Disable press-and-hold and enable KeyRepeat instead
+defaults write -g ApplePressAndHoldEnabled -bool false
+
+
+###### ENABLE THESE FOR TRUSTED USERS ONLY ######
+# Disable Gatekeepr - http://osxdaily.com/2015/05/04/disable-gatekeeper-command-line-mac-osx/
+#echo $passwd | sudo -S -k spctl --master-disable
+# Disable System Integrity Protection (rootless)
+#echo $passwd | sudo -S -k csrutil disable
+#################################################
+
+
 # Profile Picture
 fancy_echo "Setting user avatar..."
-echo $passwd | sudo -S -k  dscl . delete $HOME jpegphoto
-echo $passwd | sudo -S -k  dscl . delete $HOME Picture
-echo $passwd | sudo -S -k  dscl . create $HOME Picture "$HOME/Pictures/avatar.png"
-
-# Configure Dock
-fancy_echo "Configuring dock..."
-/usr/libexec/PlistBuddy -c "Add :magnification bool true" ~/Library/Preferences/com.apple.dock.plist
-/usr/libexec/PlistBuddy -c "Add :autohide bool true" ~/Library/Preferences/com.apple.dock.plist
-/usr/libexec/PlistBuddy -c "Delete :persistent-apps" ~/Library/Preferences/com.apple.dock.plist
-/usr/libexec/PlistBuddy -c "Add :persistent-apps array" ~/Library/Preferences/com.apple.dock.plist
-
-# Add new items to the dock
-defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Slack.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
-defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Mail.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
-defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Google Chrome.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
-defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Atom.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
-killall Dock
+echo $passwd | sudo -S -k dscl . delete $HOME jpegphoto
+echo $passwd | sudo -S -k dscl . delete $HOME Picture
+echo $passwd | sudo -S -k dscl . create $HOME Picture "$HOME/Pictures/avatar.png"
 
 # Fonts
 fancy_echo "Downloading & Installing fonts..."
@@ -76,6 +77,9 @@ echo $passwd | sudo -S -k cp $HOME/Desktop/Ubuntu/*.ttf $HOME/Desktop/Fonts
 rm -rf $HOME/Desktop/Source_Sans_Pro/
 rm -rf $HOME/Desktop/Inconsolata/
 rm -rf $HOME/Desktop/Ubuntu/
+
+fancy_echo "Rebuilding font cache..."
+echo $passwd | sudo -S -k atsutil databases -remove
 
 # Install tccutil and add terminal to list of allowed assistive devices
 curl -O https://raw.githubusercontent.com/jacobsalmela/tccutil/master/tccutil.py
@@ -147,22 +151,18 @@ brew install rbenv ruby-build rbenv-default-gems
 
 # Install Databases
 fancy_echo "Installing database tools..."
-brew install postgres redis sqlite mongodb
-
-# MySQL
-brew install mysql
+brew install postgres redis sqlite mongodb mysql
 brew services start mysql
 
 fancy_echo "Installing GUI tools with brew cask..."
 
-# Vagrant and VirtualBox
-brew cask install virtualbox vagrant
+echo $passwd | sudo -S -k brew cask install virtualbox vagrant google-chrome firefox github-desktop slack
 
-# Browsers
-brew cask install google-chrome firefox
+# Text Editors
+brew cask install sublime-text atom
 
-# Sublime
-brew cask install sublime-text
+# Java JDK
+echo $passwd | sudo -S -k brew install java
 
 # Cleanup
 brew cleanup
@@ -243,11 +243,7 @@ curl -s http://cdn.mysql.com//Downloads/MySQLGUITools/mysql-workbench-community-
 yes | hdiutil attach -noverify -nobrowse -mountpoint $temp/mount $temp/1.dmg
 cp -r $temp/mount/*.app /Applications
 hdiutil detach $temp/mount
-rm -r $temp
-
-# Install Slack
-fancy_echo "Installing Slack..."
-curl -s https://downloads.slack-edge.com/mac_public_releases/slack-2.0.3.zip | tar xvz -C /Applications
+rm -rf $temp
 
 # Install jMeter
 fancy_echo "Installing jMeter..."
@@ -257,9 +253,19 @@ curl -s http://mirrors.ukfast.co.uk/sites/ftp.apache.org//jmeter/binaries/apache
 fancy_echo "Installing MacDown..."
 curl -L -s https://github.com/uranusjr/macdown/releases/download/v0.6/MacDown.app.zip | tar xvz -C /Applications
 
-# Install Atom
-fancy_echo "Installing Atom..."
-curl -L -s https://github.com/atom/atom/releases/download/v1.8.0/atom-mac.zip | tar xvz -C /Applications
+# Configure Dock
+fancy_echo "Configuring dock..."
+/usr/libexec/PlistBuddy -c "Add :magnification bool true" ~/Library/Preferences/com.apple.dock.plist
+/usr/libexec/PlistBuddy -c "Add :autohide bool true" ~/Library/Preferences/com.apple.dock.plist
+/usr/libexec/PlistBuddy -c "Delete :persistent-apps" ~/Library/Preferences/com.apple.dock.plist
+/usr/libexec/PlistBuddy -c "Add :persistent-apps array" ~/Library/Preferences/com.apple.dock.plist
+
+# Add new items to the dock
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Slack.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Mail.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Google Chrome.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Atom.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+killall Dock
 
 # Restart Finder
 fancy_echo "Restarting Finder..."
@@ -284,6 +290,11 @@ cd ~/sparta-workstation && vagrant up
 
 # Halt Vagrant VM and restart machine
 fancy_echo "----------------------DONE!----------------------"
+echo
+fancy_echo "*************************************************"
+echo " Don't forget to install XCode from the App Store"
+fancy_echo "*************************************************"
+
 fancy_echo "Restarting..."
 vagrant halt && echo $passwd | sudo -S -k shutdown -r now "Restarting"
 
