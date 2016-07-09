@@ -74,13 +74,9 @@ rm -f $HOME/avatar_import.txt
 
 # Fonts
 fancy_echo "Downloading & Installing fonts..."
-curl -s https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip | tar xvz -C "$HOME/Desktop"
-echo $passwd | sudo -S -k cp $HOME/Desktop/Source_Sans_Pro/*.ttf /Library/Fonts
-echo $passwd | sudo -S -k cp $HOME/Desktop/Inconcolata/*.ttf /Library/Fonts
-echo $passwd | sudo -S -k cp $HOME/Desktop/Ubuntu/*.ttf /Library/Fonts
-rm -rf $HOME/Desktop/Source_Sans_Pro/
-rm -rf $HOME/Desktop/Inconsolata/
-rm -rf $HOME/Desktop/Ubuntu/
+curl -s https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip | tar xvz -C "$HOME/Desktop/Fonts"
+echo $passwd | sudo -S -k cp $HOME/Desktop/Fonts/*.ttf /Library/Fonts
+rm -rf $HOME/Desktop/Fonts/
 
 fancy_echo "Rebuilding font cache..."
 echo $passwd | sudo -S -k atsutil databases -remove
