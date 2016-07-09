@@ -152,6 +152,10 @@ brew cask install google-chrome firefox
 # Sublime
 brew cask install sublime-text
 
+# Cleanup
+brew cleanup
+brew cask cleanup
+
 # Install Ruby
 find_latest_ruby() {
   rbenv install -l | grep -v - | tail -1 | sed -e 's/^ *//'
@@ -183,7 +187,6 @@ if ! rbenv versions | grep -Fq "$ruby_version"; then
 fi
 
 rbenv global "$ruby_version"
-rbenv shell "$ruby_version"
 gem update --system
 gem_install_or_update 'bundler'
 gem_install_or_update 'brice'
