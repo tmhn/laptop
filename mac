@@ -53,19 +53,29 @@ echo $passwd | sudo -S -k  dscl . delete $HOME jpegphoto
 echo $passwd | sudo -S -k  dscl . delete $HOME Picture
 echo $passwd | sudo -S -k  dscl . create $HOME Picture "$HOME/Pictures/avatar.png"
 
-# Dock
+# Configure Dock
 fancy_echo "Configuring dock..."
 /usr/libexec/PlistBuddy -c "Add :magnification bool true" ~/Library/Preferences/com.apple.dock.plist
 /usr/libexec/PlistBuddy -c "Add :autohide bool true" ~/Library/Preferences/com.apple.dock.plist
 /usr/libexec/PlistBuddy -c "Delete :persistent-apps" ~/Library/Preferences/com.apple.dock.plist
 /usr/libexec/PlistBuddy -c "Add :persistent-apps array" ~/Library/Preferences/com.apple.dock.plist
+
+# Add new items to the dock
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Slack.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Mail.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Google Chrome.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Atom.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
 killall Dock
 
 # Fonts
-fancy_echo "Downloading fonts..."
+fancy_echo "Downloading & Installing fonts..."
 curl -s https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip | tar xvz -C "$HOME/Desktop"
-
-# TODO: Install fonts by copying files into fonts folder
+echo $passwd | sudo -S -k cp $HOME/Desktop/Source_Sans_Pro/*.ttf $HOME/Desktop/Fonts
+echo $passwd | sudo -S -k cp $HOME/Desktop/Inconcolata/*.ttf $HOME/Desktop/Fonts
+echo $passwd | sudo -S -k cp $HOME/Desktop/Ubuntu/*.ttf $HOME/Desktop/Fonts
+rm -rf $HOME/Desktop/Source_Sans_Pro/
+rm -rf $HOME/Desktop/Inconsolata/
+rm -rf $HOME/Desktop/Ubuntu/
 
 # Install tccutil and add terminal to list of allowed assistive devices
 curl -O https://raw.githubusercontent.com/jacobsalmela/tccutil/master/tccutil.py
