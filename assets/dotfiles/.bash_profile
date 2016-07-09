@@ -19,7 +19,7 @@ source $HOME/.git_status_in_prompt.sh
 
 #Sets the shell prompt to "DIRECTORY [- GIT_BARNCH]\n→"
 export PS1='\[\033[36m\]\w $(git branch &>/dev/null; if [ $? -eq 0 ]; then \
-echo "\[\033[34m\]- $(gitParseStatus)\[\033[33m\]$(git branch | grep ^*|sed s/\*\ //)"; fi)\[\033[32m\]\nws→ \[\033[00m\]'
+echo "\[\033[34m\]- $(gitParseStatus)\[\033[33m\]$(git branch | grep ^*|sed s/\*\ //)"; fi)\[\033[32m\]\n→ \[\033[00m\]'
 
 export CLICOLOR=1
 export LSCOLORS=dxfxcxcxbxexexbxbxDADA

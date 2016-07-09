@@ -9,46 +9,20 @@ fancy_echo() {
   printf "\n$fmt\n" "$@"
 }
 
+fancy_echo "Welcome to the Sparta macOS Installer"
+echo "-------------------------------------"
+echo
+
+# Get admin password & store in $passwd
+echo -n "Admin Password: "
+stty -echo
+read passwd
+stty echo
+echo
+
+
 # Exit if any subprocess returns non-zero.
-set -e
-
-# OSX Settings
-fancy_echo "Changing some settings..."
-curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/avatar.png > "$HOME/Pictures/avatar.png"
-curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/desktop-bg.png > "$HOME/Pictures/desktop-bg.png"
-osascript <<EOD
-  tell application "Finder"
-    set desktop picture to "$HOME/Pictures/desktop-bg.png" as POSIX file
-  end tell
-EOD
-
-# Profile Picture
-dscl . delete $HOME jpegphoto
-dscl . delete $HOME Picture
-dscl . create $HOME Picture "$HOME/Pictures/avatar.png"
-
-# Dock
-/usr/libexec/PlistBuddy -c "Set :magnification bool true" ~/Library/Preferences/com.apple.dock.plist
-/usr/libexec/PlistBuddy -c "Set :autohide bool true" ~/Library/Preferences/com.apple.dock.plist
-/usr/libexec/PlistBuddy -c "Delete :persistent-apps" ~/Library/Preferences/com.apple.dock.plist
-/usr/libexec/PlistBuddy -c "Add :persistent-apps array" ~/Library/Preferences/com.apple.dock.plist
-killall Dock
-
-# Fonts
-curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip | tar xvz -C "$HOME/Desktop"
-
-# Set Terminal Colors
-curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/SpartaPro.terminal > "$HOME/SpartaPro.terminal"
-open "$HOME/SpartaPro.terminal"
-osascript <<EOD
-  tell application "Terminal"
-    set origSettings to default settings
-    set default settings to settings set "SpartaPro"
-    activate
-    tell application "System Events" to keystroke "n" using command down
-  end tell
-EOD
-
+# set -e
 
 # XCode Command Line Tools
 fancy_echo "Installing XCode Command Line tools..."
@@ -63,6 +37,52 @@ osascript <<EOD
   end tell
 EOD
 
+# OSX Settings
+fancy_echo "Setting desktop background..."
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/avatar.png > "$HOME/Pictures/avatar.png"
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/desktop-bg.png > "$HOME/Pictures/desktop-bg.png"
+osascript <<EOD
+  tell application "Finder"
+    set desktop picture to "$HOME/Pictures/desktop-bg.png" as POSIX file
+  end tell
+EOD
+
+# Profile Picture
+fancy_echo "Setting user avatar..."
+echo $passwd | sudo -S -k  dscl . delete $HOME jpegphoto
+echo $passwd | sudo -S -k  dscl . delete $HOME Picture
+echo $passwd | sudo -S -k  dscl . create $HOME Picture "$HOME/Pictures/avatar.png"
+
+# Dock
+fancy_echo "Configuring dock..."
+/usr/libexec/PlistBuddy -c "Add :magnification bool true" ~/Library/Preferences/com.apple.dock.plist
+/usr/libexec/PlistBuddy -c "Add :autohide bool true" ~/Library/Preferences/com.apple.dock.plist
+/usr/libexec/PlistBuddy -c "Delete :persistent-apps" ~/Library/Preferences/com.apple.dock.plist
+/usr/libexec/PlistBuddy -c "Add :persistent-apps array" ~/Library/Preferences/com.apple.dock.plist
+killall Dock
+
+# Fonts
+fancy_echo "Downloading fonts..."
+curl -s https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip | tar xvz -C "$HOME/Desktop"
+
+# Install tccutil and add terminal to list of allowed assistive devices
+curl -O https://raw.githubusercontent.com/jacobsalmela/tccutil/master/tccutil.py
+echo $passwd | sudo -S -k python ./tccutil.py --verbose --insert com.apple.Terminal
+
+fancy_echo "Configuring terminal..."
+# Set Terminal Colors
+curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/SpartaPro.terminal > "$HOME/SpartaPro.terminal"
+open "$HOME/SpartaPro.terminal"
+osascript <<EOD
+  tell application "Terminal"
+    set origSettings to default settings
+    set default settings to settings set "SpartaPro"
+    activate
+    tell application "System Events" to keystroke "n" using command down
+  end tell
+EOD
+
+
 # Install Homebrew
 fancy_echo "Creating ~/.bin folder..."
 if [ ! -d "$HOME/.bin/" ]; then
@@ -73,12 +93,12 @@ HOMEBREW_PREFIX="/usr/local"
 
 if [ -d "$HOMEBREW_PREFIX" ]; then
   if ! [ -r "$HOMEBREW_PREFIX" ]; then
-    sudo chown -R "$LOGNAME:admin" /usr/local
+    echo $passwd | sudo -S -k chown -R "$LOGNAME:admin" /usr/local
   fi
 else
-  sudo mkdir "$HOMEBREW_PREFIX"
-  sudo chflags norestricted "$HOMEBREW_PREFIX"
-  sudo chown -R "$LOGNAME:admin" "$HOMEBREW_PREFIX"
+  echo $passwd | sudo -S -k mkdir "$HOMEBREW_PREFIX"
+  echo $passwd | sudo -S -k chflags norestricted "$HOMEBREW_PREFIX"
+  echo $passwd | sudo -S -k chown -R "$LOGNAME:admin" "$HOMEBREW_PREFIX"
 fi
 
 gem_install_or_update() {
@@ -110,15 +130,18 @@ fancy_echo "Installing sparta libs and tools..."
 brew install openssl libxml2 libyaml ctags git vim heroku-toolbelt hub imagemagick curl chromedriver httpie node
 
 # Install Ruby
-fancy_echo "Install rbenv..."
+fancy_echo "Installing rbenv..."
 brew install rbenv ruby-build rbenv-default-gems
 
 # Install Databases
-fancy_echo "Install database tools..."
+fancy_echo "Installing database tools..."
 brew install postgres redis sqlite mongodb
 
 # MySQL
 brew install mysql
+brew services start mysql
+
+fancy_echo "Installing GUI tools with brew cask..."
 
 # Vagrant and VirtualBox
 brew cask install virtualbox vagrant
@@ -130,19 +153,32 @@ brew cask install google-chrome firefox
 brew cask install sublime-text
 
 # Install Ruby
-
 find_latest_ruby() {
   rbenv install -l | grep -v - | tail -1 | sed -e 's/^ *//'
 }
 
 ruby_version="$(find_latest_ruby)"
 
-fancy_echo "Installing and Configuring ruby $ruby_version..."
+fancy_echo "Installing and Configuring rbenv and ruby..."
 
 # append_to_zshrc 'eval "$(rbenv init - --no-rehash)"' 1
 eval "$(rbenv init -)"
 
+# Set Default rubygems to include in all ruby installations via rbenv
+fancy_echo "Setting default gems..."
+
+cat > "$HOME/.rbenv/default-gems" <<-EOF
+bundler
+brice
+gist
+pry
+pry-doc
+awesome_print
+specific_install
+EOF
+
 if ! rbenv versions | grep -Fq "$ruby_version"; then
+  fancy_echo "Installing ruby $ruby_version..."
   RUBY_CONFIGURE_OPTS=--with-openssl-dir=/usr/local/opt/openssl rbenv install -s "$ruby_version"
 fi
 
@@ -157,20 +193,8 @@ gem_install_or_update 'awesome_print'
 number_of_cores=$(sysctl -n hw.ncpu)
 bundle config --global jobs $((number_of_cores - 1))
 
-# Set Default rubygems to include in all ruby installations via rbenv
-cat > "$HOME/.rbenv/default-gems" <<-EOF
-bundler
-brice
-gist
-pry
-pry-doc
-awesome_print
-specific_install
-EOF
-
 # Update NPM
 fancy_echo "Updating NPM..."
-
 npm update npm -g
 npm update -g
 
@@ -183,24 +207,24 @@ curl -O https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotf
 curl -O https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.irbrc
 curl -O https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.gitconfig
 curl -O https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/dotfiles/.git_status_in_prompt.sh
-fancy_echo "Installed dotfiles!"
+fancy_echo "dotfiles done!"
 
 # Install vim-plug
 
 echo "Installing Vim Plug..."
 
 curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-fancy_echo "Running Vim Plug Commands"
+fancy_echo "Running VimPlug Commands..."
 
-vim +PlugInstall +qall
-vim +PlugClean +qall
+vim :silent +PlugInstall +qall
+vim :silent +PlugClean +qall
 
 
 # Install MySQL Workbench
 fancy_echo "Installing MySQL Workbench..."
 temp=$TMPDIR$(uuidgen)
 mkdir -p $temp/mount
-curl https://dev.mysql.com/get/Downloads/MySQLGUITools/mysql-workbench-community-6.3.7-osx-x86_64.dmg > $temp/1.dmg
+curl http://cdn.mysql.com//Downloads/MySQLGUITools/mysql-workbench-community-6.3.7-osx-x86_64.dmg > $temp/1.dmg
 yes | hdiutil attach -noverify -nobrowse -mountpoint $temp/mount $temp/1.dmg
 cp -r $temp/mount/*.app /Applications
 hdiutil detach $temp/mount
@@ -218,30 +242,41 @@ rm -r $temp
 
 # Install Slack
 fancy_echo "Installing Slack..."
-curl https://downloads.slack-edge.com/mac_public_releases/slack-2.0.3.zip | tar xvz -C /Applications
+curl -s https://downloads.slack-edge.com/mac_public_releases/slack-2.0.3.zip | tar xvz -C /Applications
 
 # Install jMeter
 fancy_echo "Installing jMeter..."
-curl http://mirrors.ukfast.co.uk/sites/ftp.apache.org//jmeter/binaries/apache-jmeter-3.0.tgz | tar xvz -C $HOME
+curl -s http://mirrors.ukfast.co.uk/sites/ftp.apache.org//jmeter/binaries/apache-jmeter-3.0.tgz | tar xvz -C $HOME
 
 # Install MacDown
 fancy_echo "Installing MacDown..."
-curl -L https://github.com/uranusjr/macdown/releases/download/v0.6/MacDown.app.zip | tar xvz -C /Applications
+curl -L -s https://github.com/uranusjr/macdown/releases/download/v0.6/MacDown.app.zip | tar xvz -C /Applications
 
 # Install Atom
 fancy_echo "Installing Atom..."
-curl -L https://github.com/atom/atom/releases/download/v1.8.0/atom-mac.zip | tar xvz -C /Applications
+curl -L -s https://github.com/atom/atom/releases/download/v1.8.0/atom-mac.zip | tar xvz -C /Applications
+
+# Restart Finder
+fancy_echo "Restarting Finder..."
+killall Finder && open /System/Library/CoreServices/Finder.app
 
 # Run Apple Update
-fancy_echo "Updating macOS"
-sudo softwareupdate -i -a
+fancy_echo "Updating macOS..."
+echo $passwd | sudo -S -k softwareupdate -i -a
+
+#Unset $passwd
+unset passwd
+
+fancy_echo "----------------------Local Setup Finished!----------------------"
 
 
 # Clone and install Workstation VM
-# git clone https://github.com/spartaglobal/sparta-workstation.git ~/sparta-workstation
-# rm -rdf ~/sparta-workstation/.git ~/sparta-workstation/README.md
-# cd ~/sparta-workstation && vagrant up
+fancy_echo "Installing Sparta Workstation..."
+git clone https://github.com/spartaglobal/sparta-workstation.git ~/sparta-workstation
+rm -rdf ~/sparta-workstation/.git ~/sparta-workstation/README.md
+cd ~/sparta-workstation && vagrant up
 
-fancy_echo "DONE!"
-fancy_echo "-----------------------------------------"
-
+# Halt Vagrant VM and restart machine
+fancy_echo "----------------------DONE!----------------------"
+fancy_echo "Restarting..."
+vagrant halt && restart
