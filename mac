@@ -65,6 +65,8 @@ killall Dock
 fancy_echo "Downloading fonts..."
 curl -s https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip | tar xvz -C "$HOME/Desktop"
 
+# TODO: Install fonts by copying files into fonts folder
+
 # Install tccutil and add terminal to list of allowed assistive devices
 curl -O https://raw.githubusercontent.com/jacobsalmela/tccutil/master/tccutil.py
 echo $passwd | sudo -S -k python ./tccutil.py --verbose --insert com.apple.Terminal
@@ -267,9 +269,6 @@ killall Finder && open /System/Library/CoreServices/Finder.app
 fancy_echo "Updating macOS..."
 echo $passwd | sudo -S -k softwareupdate -i -a
 
-#Unset $passwd
-unset passwd
-
 fancy_echo "----------------------Local Setup Finished!----------------------"
 
 
@@ -282,4 +281,7 @@ cd ~/sparta-workstation && vagrant up
 # Halt Vagrant VM and restart machine
 fancy_echo "----------------------DONE!----------------------"
 fancy_echo "Restarting..."
-vagrant halt && restart
+vagrant halt && echo $passwd | sudo -S -k shutdown -r now "Restarting"
+
+#Unset $passwd
+unset passwd
