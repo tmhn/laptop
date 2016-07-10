@@ -36,6 +36,8 @@ osascript <<EOD
   end tell
 EOD
 
+sleep 15
+
 # OSX Settings
 fancy_echo "Setting desktop background..."
 curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/avatar.jpg > "$HOME/Pictures/avatar.jpg"
@@ -74,8 +76,9 @@ rm -f $HOME/avatar_import.txt
 
 # Fonts
 fancy_echo "Downloading & Installing fonts..."
+mkdir $HOME/Desktop/Fonts
 curl -s https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/fonts.zip | tar xvz -C "$HOME/Desktop/Fonts"
-echo $passwd | sudo -S -k cp $HOME/Desktop/Fonts/*.ttf /Library/Fonts
+echo $passwd | sudo -S -k cp $HOME/Desktop/Fonts/fonts/*.ttf /Library/Fonts
 rm -rf $HOME/Desktop/Fonts/
 
 fancy_echo "Rebuilding font cache..."
