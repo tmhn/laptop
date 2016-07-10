@@ -16,7 +16,6 @@ This script is designed to install and configure Sparta student and trainer macO
 
 The script is fairly complex, and configures student laptops for our training courses. In general, it:
 
-* Installs XCode command line tools.
 * Sets the desktop background and user avatar.
 * Sets a faster key repeat rate.
 * Downloads and installs Sparta fonts, and rebuilds the font cache.
@@ -72,6 +71,11 @@ The script is fairly complex, and configures student laptops for our training co
 
 ### Todo
 
+* Split into multiple Scripts
+    - Config: Basic config stuff and all the curl stuff
+    - Install: Homebrew and all the Apps
+    - VM: The VM installation
+    - Cleanup: All the required cleanup
 * Add check to each section to only run them if needed, to allow multiple runs.
 * Build second script to reset laptops to initial state:
     - Remove all rubies and gems
