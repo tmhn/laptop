@@ -68,8 +68,8 @@ fancy_echo "Setting user avatar..."
 
 echo "0x0A 0x5C 0x3A 0x2C dsRecTypeStandard:Users 4 dsAttrTypeStandard:RecordName externalbinary:dsAttrTypeStandard:JPEGPhoto dsAttrTypeStandard:UniqueID dsAttrTypeStandard:PrimaryGroupID dsAttrTypeStandard:GeneratedUID" > $HOME/avatar_import.txt
 echo $USER:$HOME/Pictures/avatar.jpg:$UID:$(id -g):$(dscl . -read /Users/$USER GeneratedUID | cut -d' ' -f2) >> $HOME/avatar_import.txt
-echo $passwd | sudo -S -k sudo dscl . -delete /Users/$USER JPEGPhoto
-echo $passwd | sudo -S -k sudo dsimport $HOME/avatar_import.txt /Local/Default M -u diradmin
+echo $passwd | sudo -S -k dscl . -delete /Users/$USER JPEGPhoto
+echo $passwd | sudo -S -k dsimport $HOME/avatar_import.txt /Local/Default M -u diradmin
 rm -f $HOME/avatar_import.txt
 
 # Fonts
@@ -137,6 +137,8 @@ fi
 if brew list | grep -Fq brew-cask; then
   fancy_echo "Uninstalling old Homebrew-Cask..."
   brew uninstall --force brew-cask
+  brew cleanup
+  brew cask cleanup
 fi
 
 fancy_echo "Updating Homebrew formulae..."
@@ -159,7 +161,7 @@ fancy_echo "Installing GUI tools with brew cask..."
 echo $passwd | sudo -S -k brew cask install virtualbox vagrant google-chrome firefox github-desktop slack
 
 # Text Editors
-brew cask install sublime-text atom
+echo $passwd | sudo -S -k brew cask install sublime-text atom
 
 # Java JDK
 echo $passwd | sudo -S -k brew install java
@@ -231,8 +233,8 @@ echo "Installing Vim Plug..."
 curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fancy_echo "Running VimPlug Commands..."
 
-vim :silent +PlugInstall +qall
-vim :silent +PlugClean +qall
+vim :silent! +PlugInstall +qall
+vim :silent! +PlugClean +qall
 
 
 # Install MySQL Workbench
