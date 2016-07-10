@@ -25,8 +25,8 @@ echo
 
 # XCode Command Line Tools
 fancy_echo "Installing XCode Command Line tools..."
-xcode-select --install
-sleep 3
+echo $passwd | sudo -S -k xcode-select --install
+sleep 5
 osascript <<EOD
   tell application "System Events"
     tell process "Install Command Line Developer Tools"
@@ -36,7 +36,7 @@ osascript <<EOD
   end tell
 EOD
 
-sleep 15
+sleep 60
 
 # OSX Settings
 fancy_echo "Setting desktop background..."
@@ -92,6 +92,7 @@ fancy_echo "Configuring terminal..."
 # Set Terminal Colors
 curl https://raw.githubusercontent.com/spartaglobal/laptop/master/assets/SpartaPro.terminal > "$HOME/SpartaPro.terminal"
 open "$HOME/SpartaPro.terminal"
+slep 10
 osascript <<EOD
   tell application "Terminal"
     set origSettings to default settings
