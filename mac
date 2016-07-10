@@ -138,7 +138,7 @@ echo $passwd | sudo -S -k brew cask install virtualbox vagrant google-chrome fir
 echo $passwd | sudo -S -k brew cask install sublime-text atom
 
 # Java JDK
-echo $passwd | sudo -S -k brew install java
+echo $passwd | sudo -S -k brew cask install java
 
 # Cleanup
 brew cleanup
