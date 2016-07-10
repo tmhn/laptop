@@ -69,6 +69,19 @@ The script is fairly complex, and configures student laptops for our training co
 * Clones the Sparta Workstation VM into `~/sparta/workstation`, configures it and provisions the vagrant box.
 * Shuts down the Vagrant Box and restarts the machine.
 
+### Todo
+
+* Add check to each section to only run them if needed, to allow multiple runs.
+* Build second script to reset laptops to initial state:
+    - Remove all rubies and gems
+    - Remove all brew installed packages
+    - Remove homebrew
+    - Clear downloads, home directory etc
+    - Empty Trash
+    - Empty Applications folder of all but default Gems
+    - Clear Safari Browsing History
+    - Reset as many macOS settings as possible
+
 ### Inspiration
 
 Bits of this script were borrowed from all over the internet, but in particular:
