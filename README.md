@@ -93,6 +93,6 @@ Bits of this script were borrowed from all over the internet, but in particular:
 * https://github.com/attack/laptop
 * https://github.com/thoughtbot/laptop/
 
-Initially built by [@dannysmith](http://github.com/dannysmith).
+Initially built by [@dannysmith 👨](http://github.com/dannysmith).
 
 
